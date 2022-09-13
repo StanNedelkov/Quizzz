@@ -13,6 +13,8 @@ namespace Quizzz.Core.Services
 {
     public class QuizService : IQuizService
     {
+        private const string invalidIdMessage = "Invalid Quiz ID!";
+
         private readonly QuizzzRepository repo;
         public QuizService(QuizzzRepository _repo)
         {
@@ -27,6 +29,29 @@ namespace Quizzz.Core.Services
             );
             await repo.SaveChangesAsync();
             
+        }
+
+        public async Task EditQuizAsync(QuizViewModel model)
+        {
+            var quiz = await repo.GetByIdAsync<Quiz>(model.Id);
+            if (quiz == null)
+            {
+                throw new ArgumentException(invalidIdMessage);
+            }
+
+            quiz.Name = model.Name;
+            await repo.SaveChangesAsync();
+        }
+
+        public async Task<QuizViewModel> GetDetailsAsync(int id)
+        {
+            var quizWithDetails = await repo.GetByIdAsync<Quiz>(id);
+
+            return new QuizViewModel()
+            {
+                Id = quizWithDetails.Id,
+                Name = quizWithDetails.Name
+            };
         }
 
         public async Task<IEnumerable<QuizViewModel>> GetQuizesAsync()

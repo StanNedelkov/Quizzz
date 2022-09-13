@@ -41,8 +41,10 @@ namespace Quizzz.Controllers
                 return NotFound();
             }
 
-            var quiz = await context.Quizzes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var quiz = await service.GetDetailsAsync(id ?? 0);
+                
+                /*context.Quizzes
+                .FirstOrDefaultAsync(m => m.Id == id);*/
             if (quiz == null)
             {
                 return NotFound();
@@ -80,7 +82,7 @@ namespace Quizzz.Controllers
                 return NotFound();
             }
 
-            var quiz = await context.Quizzes.FindAsync(id);
+            var quiz = await service.GetDetailsAsync(id ?? 0);
             if (quiz == null)
             {
                 return NotFound();
@@ -93,7 +95,7 @@ namespace Quizzz.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Quiz quiz)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] QuizViewModel quiz)
         {
             if (id != quiz.Id)
             {
@@ -104,10 +106,13 @@ namespace Quizzz.Controllers
             {
                 try
                 {
-                    context.Update(quiz);
-                    await context.SaveChangesAsync();
+                    await service.EditQuizAsync(quiz);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch(ArgumentException ae)
+                {
+                    return NotFound();
+                }
+               /* catch (DbUpdateConcurrencyException)
                 {
                     if (!QuizExists(quiz.Id))
                     {
@@ -117,7 +122,7 @@ namespace Quizzz.Controllers
                     {
                         throw;
                     }
-                }
+                }*/
                 return RedirectToAction(nameof(Index));
             }
             return View(quiz);
