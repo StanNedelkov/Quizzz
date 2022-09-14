@@ -5,8 +5,8 @@ namespace Quizzz.Infrastructure.Data.Common.Repository
     public class QuizzzRepository : Repository, IQuizzzRepository
     {
         public QuizzzRepository(ApplicationDbContext context)
+            : base(context)
         {
-            this.Context = context;
         }
     }
 }

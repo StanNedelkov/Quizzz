@@ -7,16 +7,22 @@ namespace Quizzz.Infrastructure.Data.Common.Repository
 {
     public abstract class Repository : IRepository
     {
+
         /// <summary>
         /// Entity framework DB context holding connection information and properties
         /// and tracking entity states 
         /// </summary>
-        protected DbContext Context { get; set; } = null!;
+        /// 
+        public Repository(DbContext _context)
+        {
+            this.Context = _context;
+        }
+        private DbContext Context { get; set; } 
 
         /// <summary>
         /// Representation of table in database
         /// </summary>
-        protected DbSet<T> DbSet<T>() where T : class
+        private DbSet<T> DbSet<T>() where T : class
         {
             return this.Context.Set<T>();
         }
@@ -24,6 +30,8 @@ namespace Quizzz.Infrastructure.Data.Common.Repository
         /// <summary>
         /// Adds entity to the database
         /// </summary>
+        /// 
+       
        
         public async Task AddAsync<T>(T entity) where T : class
         {

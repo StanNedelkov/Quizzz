@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using Quizzz.Core.Contracts;
 using Quizzz.Core.Models;
+using Quizzz.Core.Services;
 using Quizzz.Infrastructure.Data;
-using Quizzz.Infrastructure.Data.Models;
 
 namespace Quizzz.Controllers
 {
     public class QuizesController : Controller
     {
-        private readonly ApplicationDbContext context;
-        private readonly IQuizService service;
+       // private readonly ApplicationDbContext context;
+        public IQuizService service;
 
-        public QuizesController(ApplicationDbContext _context, IQuizService _service)
+        public QuizesController(IQuizService _service)
         {
-            this.context = _context;
+           // this.context = _context;
             this.service = _service;
         }
 
@@ -36,7 +30,7 @@ namespace Quizzz.Controllers
         // GET: Quizes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || context.Quizzes == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -77,7 +71,7 @@ namespace Quizzz.Controllers
         // GET: Quizes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || context.Quizzes == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -131,13 +125,12 @@ namespace Quizzz.Controllers
         // GET: Quizes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || context.Quizzes == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var quiz = await context.Quizzes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var quiz = await service.GetDetailsAsync(id ?? 0);
             if (quiz == null)
             {
                 return NotFound();
@@ -151,23 +144,20 @@ namespace Quizzz.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (context.Quizzes == null)
+            try
             {
-                return Problem("Entity set 'ApplicationDbContext.Quizzes'  is null.");
+                await service.DeleteQuizAsync(id);
+
             }
-            var quiz = await context.Quizzes.FindAsync(id);
-            if (quiz != null)
+            catch (ArgumentException ae)
             {
-                context.Quizzes.Remove(quiz);
+
+                return NotFound();
             }
             
-            await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool QuizExists(int id)
-        {
-          return (context.Quizzes?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+      
     }
 }

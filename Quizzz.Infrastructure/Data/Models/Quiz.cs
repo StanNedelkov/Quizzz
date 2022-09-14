@@ -15,6 +15,7 @@ namespace Quizzz.Infrastructure.Data.Models
         [StringLength(50)]
         public string Name { get; set; } = null!;
 
+        public bool IsActive { get; set; } = true;
         public virtual ICollection<Question> Questions { get; set; }
 
     }

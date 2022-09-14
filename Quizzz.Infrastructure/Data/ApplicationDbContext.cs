@@ -15,10 +15,7 @@ namespace Quizzz.Infrastructure.Data
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-        }
+       
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

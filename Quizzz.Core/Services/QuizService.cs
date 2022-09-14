@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Quizzz.Core.Contracts;
 using Quizzz.Core.Models;
+using Quizzz.Infrastructure.Data.Common.Contracts;
 using Quizzz.Infrastructure.Data.Common.Repository;
 using Quizzz.Infrastructure.Data.Models;
 using System;
@@ -15,8 +16,8 @@ namespace Quizzz.Core.Services
     {
         private const string invalidIdMessage = "Invalid Quiz ID!";
 
-        private readonly QuizzzRepository repo;
-        public QuizService(QuizzzRepository _repo)
+        public IQuizzzRepository repo;
+        public QuizService(IQuizzzRepository _repo)
         {
             this.repo = _repo;
         }
@@ -29,6 +30,22 @@ namespace Quizzz.Core.Services
             );
             await repo.SaveChangesAsync();
             
+        }
+
+        public async Task DeleteQuizAsync(int id)
+        {
+
+            var quizToDelete = await repo.GetByIdAsync<Quiz>(id);
+            if (quizToDelete == null)
+            {
+                throw new ArgumentException(invalidIdMessage);
+            }
+            if (quizToDelete.IsActive)
+            {
+                quizToDelete.IsActive = false;
+                await repo.SaveChangesAsync();
+            }
+          
         }
 
         public async Task EditQuizAsync(QuizViewModel model)
@@ -47,6 +64,11 @@ namespace Quizzz.Core.Services
         {
             var quizWithDetails = await repo.GetByIdAsync<Quiz>(id);
 
+            if (quizWithDetails == null || !quizWithDetails.IsActive)
+            {
+                throw new ArgumentException(invalidIdMessage);
+            }
+
             return new QuizViewModel()
             {
                 Id = quizWithDetails.Id,
@@ -57,6 +79,7 @@ namespace Quizzz.Core.Services
         public async Task<IEnumerable<QuizViewModel>> GetQuizesAsync()
         {
             return await repo.AllReadonly<Quiz>()
+                .Where(x => x.IsActive)
                 .Select(x => new QuizViewModel()
                 {
                     Id = x.Id,

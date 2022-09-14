@@ -16,5 +16,7 @@ namespace Quizzz.Core.Contracts
         Task<QuizViewModel> GetDetailsAsync(int id);
 
         Task EditQuizAsync(QuizViewModel model);
+
+        Task DeleteQuizAsync(int id);
     }
 }
