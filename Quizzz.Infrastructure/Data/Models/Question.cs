@@ -19,7 +19,6 @@ namespace Quizzz.Infrastructure.Data.Models
         public int QuizId { get; set; }
         [ForeignKey(nameof(QuizId))]
         public Quiz Quiz { get; set; } = null!;
-
         public virtual ICollection<Answer> Answers { get; set; }
     }
 }

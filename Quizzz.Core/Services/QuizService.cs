@@ -26,7 +26,7 @@ namespace Quizzz.Core.Services
         {
             await repo.AddAsync 
             (
-                new Quiz() { Name = model.Name }
+                new Quiz() { Name = model.Name, TimeCreated = DateTime.Now.ToString("F") }
             );
             await repo.SaveChangesAsync();
             
@@ -72,7 +72,9 @@ namespace Quizzz.Core.Services
             return new QuizViewModel()
             {
                 Id = quizWithDetails.Id,
-                Name = quizWithDetails.Name
+                Name = quizWithDetails.Name,
+                Created = quizWithDetails.TimeCreated
+                
             };
         }
 

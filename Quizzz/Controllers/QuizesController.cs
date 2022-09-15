@@ -60,11 +60,16 @@ namespace Quizzz.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name")] QuizViewModel quiz)
         {
-            if (ModelState.IsValid)
+            if (!string.IsNullOrWhiteSpace(quiz.Name))
             {
                 await service.CreateQuizAsync(quiz);
                 return RedirectToAction(nameof(Index));
             }
+            
+            /*if (ModelState.IsValid)
+            {
+                
+            }*/
             return View(quiz);
         }
 
