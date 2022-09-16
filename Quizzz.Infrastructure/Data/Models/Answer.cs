@@ -16,5 +16,9 @@ namespace Quizzz.Infrastructure.Data.Models
         [ForeignKey(nameof(QuestionId))]
         public virtual Question Question { get; set; } = null!;
 
+        public bool IsActive { get; set; } = true;
+
+        public string TimeCreated { get; set; }
+
     }
 }

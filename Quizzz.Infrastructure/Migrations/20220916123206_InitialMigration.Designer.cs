@@ -12,8 +12,8 @@ using Quizzz.Infrastructure.Data;
 namespace Quizzz.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220915132013_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20220916123206_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -239,11 +239,18 @@ namespace Quizzz.Infrastructure.Migrations
                         .HasMaxLength(400)
                         .HasColumnType("nvarchar(400)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsCorrect")
                         .HasColumnType("bit");
 
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
+
+                    b.Property<string>("TimeCreated")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -265,8 +272,15 @@ namespace Quizzz.Infrastructure.Migrations
                         .HasMaxLength(280)
                         .HasColumnType("nvarchar(280)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<int>("QuizId")
                         .HasColumnType("int");
+
+                    b.Property<string>("TimeCreated")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

@@ -36,9 +36,7 @@ namespace Quizzz.Controllers
             }
 
             var quiz = await service.GetDetailsAsync(id ?? 0);
-                
-                /*context.Quizzes
-                .FirstOrDefaultAsync(m => m.Id == id);*/
+               
             if (quiz == null)
             {
                 return NotFound();

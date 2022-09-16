@@ -1,4 +1,5 @@
-﻿using Quizzz.Core.Contracts;
+﻿using Microsoft.EntityFrameworkCore;
+using Quizzz.Core.Contracts;
 using Quizzz.Core.Models;
 using Quizzz.Infrastructure.Data.Common.Contracts;
 using Quizzz.Infrastructure.Data.Models;
@@ -12,6 +13,7 @@ namespace Quizzz.Core.Services
 {
     public class QuestionService : IQuestionService
     {
+        private const string invalidIdMessage = "Invalid Question ID!";
         public IQuizzzRepository repo;
         public QuestionService(IQuizzzRepository _repo)
         {
@@ -21,10 +23,65 @@ namespace Quizzz.Core.Services
         {
             await repo.AddAsync(new Question() 
             { 
-                Content = model.Content, QuizId = model.QuizId
+                Content = model.Content, QuizId = model.QuizId, Quiz = model.Quiz, TimeCreated = DateTime.Now.ToString("f")
             });
             await repo.SaveChangesAsync();
         }
 
+        public async Task DeleteQuestionAsync(int id)
+        {
+            var question = await repo.GetByIdAsync<Question>(id);
+
+            CheckIfQuestionIsNull(question);
+
+            question.IsActive = false;
+            await repo.SaveChangesAsync();
+        }
+
+        public async Task EditQuizAsync(QuestionViewModel model)
+        {
+            var question = await repo.GetByIdAsync<Question>(model.Id);
+
+            CheckIfQuestionIsNull(question);
+
+            question.Content = model.Content;
+            question.Quiz = model.Quiz;
+            question.QuizId = model.QuizId;
+
+            await repo.SaveChangesAsync();
+        }
+
+        public async Task<QuestionViewModel> GetDetailsAsync(int id)
+        {
+            var question = await repo.GetByIdAsync<Question>(id);
+            var quizForQuestion = await repo.GetByIdAsync<Quiz>(question.QuizId);
+
+            CheckIfQuestionIsNull(question);
+
+            return new QuestionViewModel()
+            {
+                Id = question.Id,
+                Content = question.Content,
+                Quiz = quizForQuestion,
+                QuizId = question.QuizId
+            };
+           
+        }
+
+        public async Task<IEnumerable<QuestionViewModel>> GetQuestionsAsync()
+        {
+            return await repo.AllReadonly<Question>()
+                 .Where(x => x.IsActive)
+                 .Select(x => new QuestionViewModel() { Id = x.Id, Content = x.Content, QuizId = x.QuizId, Quiz = x.Quiz })
+                 .ToArrayAsync();
+        }
+
+        private static void CheckIfQuestionIsNull(Question question)
+        {
+            if (question == null || !question.IsActive)
+            {
+                throw new ArgumentNullException(invalidIdMessage);
+            }
+        }
     }
 }

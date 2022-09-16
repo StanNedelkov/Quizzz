@@ -26,21 +26,19 @@ namespace Quizzz.Controllers
         // GET: Questions
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Questions.Include(q => q.Quiz);
-            return View(await applicationDbContext.ToListAsync());
+          
+            return View(await service.GetQuestionsAsync());
         }
 
         // GET: Questions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Questions == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var question = await _context.Questions
-                .Include(q => q.Quiz)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var question = await service.GetDetailsAsync(id ?? 0);
             if (question == null)
             {
                 return NotFound();
@@ -63,13 +61,12 @@ namespace Quizzz.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Content,QuizId")] QuestionViewModel question)
         {
-            if (ModelState.IsValid)
-            {
+           
                 await service.CreateQuestionAsync(question);
                 return RedirectToAction(nameof(Index));
-            }
+            
            // ViewData["QuizId"] = new SelectList(_context.Quizzes, "Id", "Name", question.QuizId);
-            return View(question);
+           // return View(question);
         }
 
         // GET: Questions/Edit/5
@@ -80,7 +77,7 @@ namespace Quizzz.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Questions.FindAsync(id);
+            var question = await service.GetDetailsAsync(id ?? 0);
             if (question == null)
             {
                 return NotFound();
@@ -94,48 +91,35 @@ namespace Quizzz.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Content,QuizId")] Question question)
+        public async Task<IActionResult> Edit(int id, [Bind("Id, Content,QuizId")] QuestionViewModel question)
         {
             if (id != question.Id)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
-            {
                 try
                 {
-                    _context.Update(question);
-                    await _context.SaveChangesAsync();
+                    await service.EditQuizAsync(question);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (ArgumentException ae)
                 {
-                    if (!QuestionExists(question.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound(); 
                 }
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["QuizId"] = new SelectList(_context.Quizzes, "Id", "Name", question.QuizId);
-            return View(question);
+            
+            //ViewData["QuizId"] = new SelectList(_context.Quizzes, "Id", "Name", question.QuizId);
+            //return View(question);
         }
 
         // GET: Questions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Questions == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var question = await _context.Questions
-                .Include(q => q.Quiz)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var question = await service.GetDetailsAsync(id ?? 0);
             if (question == null)
             {
                 return NotFound();
@@ -149,17 +133,15 @@ namespace Quizzz.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Questions == null)
+            try
             {
-                return Problem("Entity set 'ApplicationDbContext.Questions'  is null.");
+                await service.DeleteQuestionAsync(id);
             }
-            var question = await _context.Questions.FindAsync(id);
-            if (question != null)
+            catch (ArgumentNullException ae)
             {
-                _context.Questions.Remove(question);
+
+                return NotFound();
             }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

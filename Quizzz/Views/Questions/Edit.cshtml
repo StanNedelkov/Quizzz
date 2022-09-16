@@ -1,4 +1,4 @@
-﻿@model Quizzz.Infrastructure.Data.Models.Question
+﻿@model Quizzz.Core.Models.QuestionViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -19,7 +19,7 @@
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="QuizId" class="control-label"></label>
+                <label asp-for="QuizId" class="control-label">Select Quiz</label>
                 <select asp-for="QuizId" class="form-control" asp-items="ViewBag.QuizId"></select>
                 <span asp-validation-for="QuizId" class="text-danger"></span>
             </div>

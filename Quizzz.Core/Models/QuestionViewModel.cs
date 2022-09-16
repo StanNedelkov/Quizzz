@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Quizzz.Infrastructure.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,5 +17,8 @@ namespace Quizzz.Core.Models
         public string Content { get; set; } = null!;
 
         public int QuizId { get; set; }
+        public Quiz Quiz { get; set; }
+        public string QuizName { get; set; }
+        public string TimeCreated { get; set; }
     }
 }
