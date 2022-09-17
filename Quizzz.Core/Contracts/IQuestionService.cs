@@ -13,6 +13,8 @@ namespace Quizzz.Core.Contracts
 
         Task<IEnumerable<QuestionViewModel>> GetQuestionsAsync();
 
+        IEnumerable<QuizViewModel> GetAllQuizes();
+
         Task<QuestionViewModel> GetDetailsAsync(int id);
 
         Task EditQuizAsync(QuestionViewModel model);

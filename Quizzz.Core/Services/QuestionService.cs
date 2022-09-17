@@ -83,5 +83,12 @@ namespace Quizzz.Core.Services
                 throw new ArgumentNullException(invalidIdMessage);
             }
         }
+
+        public IEnumerable<QuizViewModel> GetAllQuizes()
+        {
+            return repo.AllReadonly<Quiz>()
+                .Select(x => new QuizViewModel() { Id = x.Id, Name = x.Name })
+                .ToArray();
+        }
     }
 }

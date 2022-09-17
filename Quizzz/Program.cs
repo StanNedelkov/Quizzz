@@ -21,6 +21,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<IAnswerService, AnswerService>();
 
 var app = builder.Build();
 

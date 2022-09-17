@@ -14,19 +14,17 @@ namespace Quizzz.Controllers
 {
     public class QuestionsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        
         private readonly IQuestionService service;
 
-        public QuestionsController(ApplicationDbContext context, IQuestionService service)
+        public QuestionsController(IQuestionService service)
         {
-            _context = context;
             this.service = service;
         }
 
         // GET: Questions
         public async Task<IActionResult> Index()
         {
-          
             return View(await service.GetQuestionsAsync());
         }
 
@@ -48,9 +46,11 @@ namespace Quizzz.Controllers
         }
 
         // GET: Questions/Create
+       
         public IActionResult Create()
         {
-            ViewData["QuizId"] = new SelectList(_context.Quizzes, "Id", "Name");
+            
+            ViewData["QuizId"] = new SelectList(service.GetAllQuizes(), "Id", "Name");
             return View();
         }
 
@@ -72,7 +72,7 @@ namespace Quizzz.Controllers
         // GET: Questions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Questions == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -82,7 +82,7 @@ namespace Quizzz.Controllers
             {
                 return NotFound();
             }
-            ViewData["QuizId"] = new SelectList(_context.Quizzes, "Id", "Name", question.QuizId);
+            ViewData["QuizId"] = new SelectList(service.GetAllQuizes(), "Id", "Name", question.QuizId);
             return View(question);
         }
 
@@ -145,9 +145,9 @@ namespace Quizzz.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool QuestionExists(int id)
+       /* private bool QuestionExists(int id)
         {
           return (_context.Questions?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        }*/
     }
 }
