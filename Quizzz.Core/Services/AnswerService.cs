@@ -15,6 +15,7 @@ namespace Quizzz.Core.Services
     public class AnswerService : IAnswerService
     {
         private readonly IQuizzzRepository repo;
+        private const string invalidIdMessage = "Invalid Id. Answer not found.";
         public AnswerService(IQuizzzRepository _repo)
         {
             this.repo = _repo;
@@ -36,7 +37,8 @@ namespace Quizzz.Core.Services
         public IEnumerable<QuestionViewModel> GetAllQuestions()
         {
             return repo.AllReadonly<Question>()
-                .Select(x => new QuestionViewModel() { Id = x.Id, Content = x.Content })
+                .Select(x => new 
+                QuestionViewModel() { Id = x.Id, Content = x.Content })
                 .ToArray();
         }
 
@@ -44,9 +46,61 @@ namespace Quizzz.Core.Services
         {
             return await repo.AllReadonly<Answer>()
                 .Where(x => x.IsActive)
-                .Select(x => new AnswerViewModel() {Id = x.Id, Content = x.Content, Question = x.Question, QuestionId = x.QuestionId })
+                .Select(x => new 
+                AnswerViewModel() {Id = x.Id, Content = x.Content, Question = x.Question, QuestionId = x.QuestionId })
                 .ToArrayAsync();
            
+        }
+
+        public async Task<AnswerViewModel> GetDetailsAsync(int id)
+        {
+            var answer = await repo.GetByIdAsync<Answer>(id);
+            var questionForAnswer = await repo.GetByIdAsync<Question>(answer.QuestionId);
+            CheckIfNullOrInactive(answer);
+
+            return new AnswerViewModel()
+            {
+                Id = answer.Id,
+                Content = answer.Content,
+                Question = questionForAnswer,
+                QuestionId = answer.QuestionId,
+                IsCorrect = answer.IsCorrect,
+                TimeCreated = answer.TimeCreated
+            };
+        }
+
+
+        private static void CheckIfNullOrInactive(Answer answer)
+        {
+            if (answer == null || !answer.IsActive)
+            {
+                throw new ArgumentNullException(invalidIdMessage);
+            }
+        }
+
+
+
+        public async Task DeleteAnswerAsync(int id)
+        {
+            var answerToDelete = await repo.GetByIdAsync<Answer>(id);
+
+            CheckIfNullOrInactive(answerToDelete);
+
+            answerToDelete.IsActive = false;
+            await repo.SaveChangesAsync();
+        }
+
+        public async Task EditAnswerAsync(AnswerViewModel model)
+        {
+            var answerToEdit = await repo.GetByIdAsync<Answer>(model.Id);
+            CheckIfNullOrInactive(answerToEdit);
+
+            answerToEdit.Content = model.Content;
+            answerToEdit.Question = model.Question;
+            answerToEdit.QuestionId = model.QuestionId;
+            answerToEdit.IsCorrect = model.IsCorrect;
+
+            await repo.SaveChangesAsync();
         }
     }
 }

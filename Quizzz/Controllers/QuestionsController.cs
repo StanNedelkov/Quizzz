@@ -101,7 +101,7 @@ namespace Quizzz.Controllers
                 {
                     await service.EditQuizAsync(question);
                 }
-                catch (ArgumentException ae)
+                catch (ArgumentException)
                 {
                     return NotFound(); 
                 }
@@ -139,7 +139,6 @@ namespace Quizzz.Controllers
             }
             catch (ArgumentNullException ae)
             {
-
                 return NotFound();
             }
             return RedirectToAction(nameof(Index));

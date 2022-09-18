@@ -21,9 +21,18 @@ namespace Quizzz.Controllers
         }
 
         // GET: AnswersController/Details/5
-        public async Task<ActionResult> Details(int id)
+        public async Task<ActionResult> Details(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var answer = await service.GetDetailsAsync(id ?? 0);
+            if (answer == null)
+            {
+                return NotFound();
+            }
+            return View(answer);
         }
 
         // GET: AnswersController/Create
@@ -44,45 +53,72 @@ namespace Quizzz.Controllers
         }
 
         // GET: AnswersController/Edit/5
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var answerToEdit = await service.GetDetailsAsync(id ?? 0);
+            if (answerToEdit == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["QuestionId"] = new SelectList(service.GetAllQuestions(), "Id", "Content");
+            return View(answerToEdit);
         }
 
         // POST: AnswersController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id,
+            [Bind("Id, Content, Question, QuestionId, IsCorrect")] AnswerViewModel answer)
         {
+            if (id != answer.Id)
+            {
+                return NotFound();
+            }
             try
             {
-                return RedirectToAction(nameof(Index));
+               await service.EditAnswerAsync(answer);
             }
-            catch
+            catch(ArgumentNullException)
             {
-                return View();
+                return NotFound();
             }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: AnswersController/Delete/5
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound(); 
+            }
+            var answerToDelete = await service.GetDetailsAsync(id ?? 0);
+            if (answerToDelete == null)
+            {
+                return NotFound();
+            }
+            return View(answerToDelete);
         }
 
         // POST: AnswersController/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await service.DeleteAnswerAsync(id);
             }
-            catch
+            catch(ArgumentNullException)
             {
-                return View();
+                return NotFound();
             }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -1,0 +1,51 @@
+﻿@model Quizzz.Core.Models.AnswerViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Answer</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Content)
+        </dd>
+        <dt class="col-sm-2">
+            Created on
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TimeCreated)
+        </dd>
+        <dt class="col-sm-2">
+            Question
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Question.Content)
+        </dd>
+        <dt class="col-sm-2">
+            Question Id
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.QuestionId)
+        </dd>
+        @{
+            if (Model.IsCorrect)
+            {
+                <dt class="col-sm-2" style="color:#00ff99">
+                    This answer is correct.
+                </dt>
+            }
+        }
+    </dl>
+ 
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
