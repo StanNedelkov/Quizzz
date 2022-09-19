@@ -36,19 +36,29 @@ namespace Quizzz.Controllers
         }
 
         // GET: AnswersController/Create
-        public IActionResult Create()
+        public async Task <IActionResult> Create()
         {
-            ViewData["QuestionId"] = new SelectList(service.GetAllQuestions(), "Id", "Content");
-            
+           // ViewData["QuestionId"] = new SelectList(await service.GetAllQuestions(), "Id", "Content");
+            var lastQuestion = await service.GetLastQuestion();
+            ViewData["lastQuestion"] = lastQuestion.Content; 
+
             return View();
         }
 
         // POST: AnswersController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Content,QuestionId,IsCorrect")] AnswerViewModel answer)
+        public async Task<IActionResult> Create(MultiAnswersViewModel answerss)
         {
-            await service.CreateAnswerAsync(answer);
+            var lastQuestion = await service.GetLastQuestion();
+            List<AnswerViewModel> answerList = answerss.Answers;
+            foreach (var answer in answerList)
+            {
+                await service.CreateAnswerAsync(answer, lastQuestion);
+            }
+            
+            
+          
             return RedirectToAction(nameof(Index));
         }
 
@@ -65,7 +75,7 @@ namespace Quizzz.Controllers
                 return NotFound();
             }
 
-            ViewData["QuestionId"] = new SelectList(service.GetAllQuestions(), "Id", "Content");
+            ViewData["QuestionId"] = new SelectList(await service.GetAllQuestions(), "Id", "Content");
             return View(answerToEdit);
         }
 

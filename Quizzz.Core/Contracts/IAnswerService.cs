@@ -11,9 +11,10 @@ namespace Quizzz.Core.Contracts
     {
         Task<IEnumerable<AnswerViewModel>> GetAnswersAsync();
 
-        Task CreateAnswerAsync(AnswerViewModel model);
+        Task CreateAnswerAsync(AnswerViewModel model, QuestionViewModel questionModel);
 
-        IEnumerable<QuestionViewModel> GetAllQuestions();
+        Task<IEnumerable<QuestionViewModel>> GetAllQuestions();
+        Task<QuestionViewModel> GetLastQuestion();
 
         Task<AnswerViewModel> GetDetailsAsync(int id);
 
