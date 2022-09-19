@@ -21,25 +21,25 @@ namespace Quizzz.Core.Services
             this.repo = _repo;
         }
 
-        public async Task CreateAnswerAsync(AnswerViewModel model)
+        public async Task CreateAnswerAsync(AnswerViewModel model, QuestionViewModel questionModel)
         {
             await repo.AddAsync(new Answer()
             {
                 Content = model.Content,
                 Question = model.Question,
-                QuestionId = model.QuestionId,
+                QuestionId = questionModel.Id,
                 IsCorrect = model.IsCorrect,
                 TimeCreated = DateTime.Now.ToString("F")
             }) ;
             await repo.SaveChangesAsync();
         }
 
-        public IEnumerable<QuestionViewModel> GetAllQuestions()
+        public async Task<IEnumerable<QuestionViewModel>> GetAllQuestions()
         {
-            return repo.AllReadonly<Question>()
+            return await repo.AllReadonly<Question>()
                 .Select(x => new 
                 QuestionViewModel() { Id = x.Id, Content = x.Content })
-                .ToArray();
+                .ToArrayAsync();
         }
 
         public async Task<IEnumerable<AnswerViewModel>> GetAnswersAsync()
@@ -101,6 +101,15 @@ namespace Quizzz.Core.Services
             answerToEdit.IsCorrect = model.IsCorrect;
 
             await repo.SaveChangesAsync();
+        }
+
+        public async Task<QuestionViewModel> GetLastQuestion()
+        {
+            return await repo.AllReadonly<Question>()
+                .Select(x => new QuestionViewModel() { Id = x.Id, Content = x.Content, QuizId = x.QuizId, TimeCreated = x.TimeCreated})
+                .OrderBy(x => x.Id)
+                .LastOrDefaultAsync();
+                
         }
     }
 }

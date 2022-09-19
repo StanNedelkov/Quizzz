@@ -3,6 +3,7 @@ using Quizzz.Core.Contracts;
 using Quizzz.Core.Models;
 using Quizzz.Core.Services;
 using Quizzz.Infrastructure.Data;
+using Quizzz.Infrastructure.Data.Models;
 
 namespace Quizzz.Controllers
 {
@@ -61,7 +62,8 @@ namespace Quizzz.Controllers
             if (!string.IsNullOrWhiteSpace(quiz.Name))
             {
                 await service.CreateQuizAsync(quiz);
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction(nameof(Create), "Questions");
             }
             
             /*if (ModelState.IsValid)

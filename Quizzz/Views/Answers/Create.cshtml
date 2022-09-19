@@ -1,31 +1,39 @@
-﻿@model Quizzz.Core.Models.AnswerViewModel
+﻿@model Quizzz.Core.Models.MultiAnswersViewModel
 
 @{
     ViewData["Title"] = "Create";
+   
 }
 
-<h1>Create</h1>
+<h2>Add answers for</h2>
+<h2>@Html.Label("", ViewData["lastQuestion"].ToString())</h2>
 
-<h4>Question</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <input asp-for="Content" class="form-control" />
-                <span asp-validation-for="Content" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="QuestionId" class="control-label"></label>
-                <select asp-for="QuestionId" class="form-control" asp-items="ViewBag.QuestionId"></select>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsCorrect" /> @Html.DisplayNameFor(model => model.IsCorrect)
-                </label>
-            </div>
+    
+           @for (int i = 0; i < 4; i++)
+            {  
+              string checkBoxName = "c" + i;
+                
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Answers[i].Content" class="control-label"></label>
+                    <input asp-for="Answers[i].Content" class="form-control" />
+                    <span asp-validation-for="Answers[i].Content" class="text-danger"></span>
+                </div>
+               @* <div class="form-group">
+                    <label asp-for="Answers[i].QuestionId" class="control-label"></label>
+                    <select asp-for="Answers[i].QuestionId" class="form-control" asp-items="ViewBag.QuestionId"></select>
+                </div>*@
+                <div class="form-group form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="Answers[i].IsCorrect" name=@checkBoxName /> Correct answer @checkBoxName
+                    </label>
+                </div>
+            }
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
