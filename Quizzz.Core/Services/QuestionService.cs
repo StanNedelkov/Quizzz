@@ -19,11 +19,13 @@ namespace Quizzz.Core.Services
         {
             this.repo = _repo;
         }
-        public async Task CreateQuestionAsync(QuestionViewModel model)
+        public async Task CreateQuestionAsync(QuestionViewModel model, QuizViewModel quizModel)
         {
             await repo.AddAsync(new Question() 
             { 
-                Content = model.Content, QuizId = model.QuizId, Quiz = model.Quiz, TimeCreated = DateTime.Now.ToString("f")
+                Content = model.Content, 
+                QuizId = quizModel.Id, 
+                TimeCreated = DateTime.Now.ToString("f")
             });
             await repo.SaveChangesAsync();
         }
@@ -89,6 +91,20 @@ namespace Quizzz.Core.Services
             return repo.AllReadonly<Quiz>()
                 .Select(x => new QuizViewModel() { Id = x.Id, Name = x.Name })
                 .ToArray();
+        }
+
+        public async Task<QuizViewModel> GetLastQuiz()
+        {
+            var lastQuiz = await repo.AllReadonly<Quiz>()
+                .OrderBy(x => x.Id)
+                .Select(x => new QuizViewModel() { Id = x.Id, Name = x.Name, Created = x.TimeCreated})
+                .LastOrDefaultAsync();
+
+            if (lastQuiz == null)
+            {
+                throw new ArgumentNullException();
+            }
+                return lastQuiz;
         }
     }
 }

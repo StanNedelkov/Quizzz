@@ -9,7 +9,7 @@ namespace Quizzz.Core.Contracts
 {
     public interface IQuestionService
     {
-        Task CreateQuestionAsync(QuestionViewModel model);
+        Task CreateQuestionAsync(QuestionViewModel model, QuizViewModel quizModel);
 
         Task<IEnumerable<QuestionViewModel>> GetQuestionsAsync();
 
@@ -20,5 +20,7 @@ namespace Quizzz.Core.Contracts
         Task EditQuizAsync(QuestionViewModel model);
 
         Task DeleteQuestionAsync(int id);
+
+        Task<QuizViewModel> GetLastQuiz();
     }
 }

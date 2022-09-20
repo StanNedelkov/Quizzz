@@ -6,117 +6,151 @@
  * Copyright (c) 2017 Jörn Zaefferer
  * Released under the MIT license
  */
-(function( factory ) {
-	if ( typeof define === "function" && define.amd ) {
-		define( ["jquery"], factory );
+
+/*function valSelect()
+{
+	var checker = document.CH.c0.checked || document.CH.c1.checked || document.CH.c2.checked || document.CH.c3.checked;
+    if (checker == false) {
+		alert("Please check at least one correct answer.");
+    }
+}*/
+var checkboxes = document.querySelectorAll('input[type="form-check-input"]');
+var checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
+
+$(document).ready(function () {
+	$("form").submit(function () {
+		if ($('input:checkbox').filter(':checked').length < 1) {
+			alert("Please Check at least one Check Box");
+			return false;
+		}
+	});
+});
+
+$(function () {
+	var requiredCheckboxes = $('.browsers :checkbox[required]');
+	requiredCheckboxes.change(function () {
+		if (requiredCheckboxes.is(':checked')) {
+			requiredCheckboxes.removeAttr('required');
+		} else {
+			requiredCheckboxes.attr('required', 'required');
+		}
+	});
+});
+
+(function (factory) {
+	if (typeof define === "function" && define.amd) {
+		define(["jquery"], factory);
 	} else if (typeof module === "object" && module.exports) {
-		module.exports = factory( require( "jquery" ) );
+		module.exports = factory(require("jquery"));
 	} else {
-		factory( jQuery );
+		factory(jQuery);
 	}
-}(function( $ ) {
+}(function ($) {
 
-$.extend( $.fn, {
+	$.extend($.fn, {
 
-	// https://jqueryvalidation.org/validate/
-	validate: function( options ) {
+		// https://jqueryvalidation.org/validate/
+		validate: function (options) {
 
-		// If nothing is selected, return nothing; can't chain anyway
-		if ( !this.length ) {
-			if ( options && options.debug && window.console ) {
-				console.warn( "Nothing selected, can't validate, returning nothing." );
+			// If nothing is selected, return nothing; can't chain anyway
+			if (!this.length) {
+				if (options && options.debug && window.console) {
+					console.warn("Nothing selected, can't validate, returning nothing.");
+				}
+				return;
 			}
-			return;
-		}
 
-		// Check if a validator for this form was already created
-		var validator = $.data( this[ 0 ], "validator" );
-		if ( validator ) {
+			// Check if a validator for this form was already created
+			var validator = $.data(this[0], "validator");
+			if (validator) {
+				return validator;
+			}
+
+			// Add novalidate tag if HTML5.
+			this.attr("novalidate", "novalidate");
+
+			validator = new $.validator(options, this[0]);
+			$.data(this[0], "validator", validator);
+
+			if (validator.settings.onsubmit) {
+
+				this.on("click.validate", ":submit", function (event) {
+
+					// Track the used submit button to properly handle scripted
+					// submits later.
+					validator.submitButton = event.currentTarget;
+
+					// Allow suppressing validation by adding a cancel class to the submit button
+					if ($(this).hasClass("cancel")) {
+						validator.cancelSubmit = true;
+					}
+
+					// Allow suppressing validation by adding the html5 formnovalidate attribute to the submit button
+					if ($(this).attr("formnovalidate") !== undefined) {
+						validator.cancelSubmit = true;
+					}
+				});
+
+				// Validate the form on submit
+				this.on("submit.validate", function (event) {
+					if (validator.settings.debug) {
+
+						// Prevent form submit to be able to see console output
+						event.preventDefault();
+					}
+					function handle() {
+						var hidden, result;
+
+						// Insert a hidden input as a replacement for the missing submit button
+						// The hidden input is inserted in two cases:
+						//   - A user defined a `submitHandler`
+						//   - There was a pending request due to `remote` method and `stopRequest()`
+						//     was called to submit the form in case it's valid
+						if (validator.submitButton && (validator.settings.submitHandler || validator.formSubmitted)) {
+							hidden = $("<input type='hidden'/>")
+								.attr("name", validator.submitButton.name)
+								.val($(validator.submitButton).val())
+								.appendTo(validator.currentForm);
+						}
+
+						if (validator.settings.submitHandler) {
+							result = validator.settings.submitHandler.call(validator, validator.currentForm, event);
+							if (hidden) {
+
+								// And clean up afterwards; thanks to no-block-scope, hidden can be referenced
+								hidden.remove();
+							}
+							if (result !== undefined) {
+								return result;
+							}
+							return false;
+						}
+						return true;
+					}
+
+					// Prevent submit for invalid forms or custom submit handlers
+					if (validator.cancelSubmit) {
+						validator.cancelSubmit = false;
+						return handle();
+					}
+					if (validator.form()) {
+						if (validator.pendingRequest) {
+							validator.formSubmitted = true;
+							return false;
+						}
+						return handle();
+					} else {
+						validator.focusInvalid();
+						return false;
+					}
+				});
+			}
+
 			return validator;
-		}
+		},
 
-		// Add novalidate tag if HTML5.
-		this.attr( "novalidate", "novalidate" );
-
-		validator = new $.validator( options, this[ 0 ] );
-		$.data( this[ 0 ], "validator", validator );
-
-		if ( validator.settings.onsubmit ) {
-
-			this.on( "click.validate", ":submit", function( event ) {
-
-				// Track the used submit button to properly handle scripted
-				// submits later.
-				validator.submitButton = event.currentTarget;
-
-				// Allow suppressing validation by adding a cancel class to the submit button
-				if ( $( this ).hasClass( "cancel" ) ) {
-					validator.cancelSubmit = true;
-				}
-
-				// Allow suppressing validation by adding the html5 formnovalidate attribute to the submit button
-				if ( $( this ).attr( "formnovalidate" ) !== undefined ) {
-					validator.cancelSubmit = true;
-				}
-			} );
-
-			// Validate the form on submit
-			this.on( "submit.validate", function( event ) {
-				if ( validator.settings.debug ) {
-
-					// Prevent form submit to be able to see console output
-					event.preventDefault();
-				}
-				function handle() {
-					var hidden, result;
-
-					// Insert a hidden input as a replacement for the missing submit button
-					// The hidden input is inserted in two cases:
-					//   - A user defined a `submitHandler`
-					//   - There was a pending request due to `remote` method and `stopRequest()`
-					//     was called to submit the form in case it's valid
-					if ( validator.submitButton && ( validator.settings.submitHandler || validator.formSubmitted ) ) {
-						hidden = $( "<input type='hidden'/>" )
-							.attr( "name", validator.submitButton.name )
-							.val( $( validator.submitButton ).val() )
-							.appendTo( validator.currentForm );
-					}
-
-					if ( validator.settings.submitHandler ) {
-						result = validator.settings.submitHandler.call( validator, validator.currentForm, event );
-						if ( hidden ) {
-
-							// And clean up afterwards; thanks to no-block-scope, hidden can be referenced
-							hidden.remove();
-						}
-						if ( result !== undefined ) {
-							return result;
-						}
-						return false;
-					}
-					return true;
-				}
-
-				// Prevent submit for invalid forms or custom submit handlers
-				if ( validator.cancelSubmit ) {
-					validator.cancelSubmit = false;
-					return handle();
-				}
-				if ( validator.form() ) {
-					if ( validator.pendingRequest ) {
-						validator.formSubmitted = true;
-						return false;
-					}
-					return handle();
-				} else {
-					validator.focusInvalid();
-					return false;
-				}
-			} );
-		}
-
-		return validator;
-	},
+		//an atempt to validate if at least one checkbox is selected when making answers for questions
+	
 
 	// https://jqueryvalidation.org/valid/
 	valid: function() {

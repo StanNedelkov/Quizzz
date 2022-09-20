@@ -35,6 +35,8 @@ namespace Quizzz.Controllers
             return View(answer);
         }
 
+
+
         // GET: AnswersController/Create
         public async Task <IActionResult> Create()
         {
@@ -50,13 +52,20 @@ namespace Quizzz.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MultiAnswersViewModel answerss)
         {
-            var lastQuestion = await service.GetLastQuestion();
-            List<AnswerViewModel> answerList = answerss.Answers;
-            foreach (var answer in answerList)
+            try
             {
-                await service.CreateAnswerAsync(answer, lastQuestion);
+                var lastQuestion = await service.GetLastQuestion();
+                List<AnswerViewModel> answerList = answerss.Answers;
+                foreach (var answer in answerList)
+                {
+                    await service.CreateAnswerAsync(answer, lastQuestion);
+                }
             }
-            
+            catch (ArgumentNullException)
+            {
+
+                return NotFound();
+            }
             
           
             return RedirectToAction(nameof(Index));

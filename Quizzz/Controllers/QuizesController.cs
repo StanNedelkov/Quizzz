@@ -49,6 +49,7 @@ namespace Quizzz.Controllers
         // GET: Quizes/Create
         public IActionResult Create()
         {
+            
             return View();
         }
 
@@ -107,7 +108,7 @@ namespace Quizzz.Controllers
                 {
                     await service.EditQuizAsync(quiz);
                 }
-                catch(ArgumentException ae)
+                catch(ArgumentException)
                 {
                     return NotFound();
                 }
@@ -154,7 +155,7 @@ namespace Quizzz.Controllers
                 await service.DeleteQuizAsync(id);
 
             }
-            catch (ArgumentException ae)
+            catch (ArgumentException )
             {
 
                 return NotFound();
