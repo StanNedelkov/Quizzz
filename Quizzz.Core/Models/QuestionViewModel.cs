@@ -17,8 +17,8 @@ namespace Quizzz.Core.Models
         public string Content { get; set; } = null!;
 
         public int QuizId { get; set; }
-        public Quiz Quiz { get; set; }
-        public string QuizName { get; set; }
-        public string TimeCreated { get; set; }
+        public Quiz Quiz { get; set; } = null!;
+        public string QuizName { get; set; } = null!;
+        public string TimeCreated { get; set; } = null!;
     }
 }

@@ -26,7 +26,6 @@ namespace Quizzz.Core.Services
             await repo.AddAsync(new Answer()
             {
                 Content = model.Content,
-                Question = model.Question,
                 QuestionId = questionModel.Id,
                 IsCorrect = model.IsCorrect,
                 TimeCreated = DateTime.Now.ToString("F")
@@ -105,10 +104,16 @@ namespace Quizzz.Core.Services
 
         public async Task<QuestionViewModel> GetLastQuestion()
         {
-            return await repo.AllReadonly<Question>()
+           var lastQuestion = await repo.AllReadonly<Question>()
                 .Select(x => new QuestionViewModel() { Id = x.Id, Content = x.Content, QuizId = x.QuizId, TimeCreated = x.TimeCreated})
                 .OrderBy(x => x.Id)
                 .LastOrDefaultAsync();
+
+            if (lastQuestion == null)
+            {
+                throw new ArgumentNullException();
+            }
+            return lastQuestion;
                 
         }
     }

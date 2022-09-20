@@ -47,10 +47,12 @@ namespace Quizzz.Controllers
 
         // GET: Questions/Create
        
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             
-            ViewData["QuizId"] = new SelectList(service.GetAllQuizes(), "Id", "Name");
+           // ViewData["QuizId"] = new SelectList(service.GetAllQuizes(), "Id", "Name");
+           var quiz = await service.GetLastQuiz();
+            ViewData["LastQuiz"] = quiz.Name;
             return View();
         }
 
@@ -61,9 +63,24 @@ namespace Quizzz.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Content,QuizId")] QuestionViewModel question)
         {
-           
-                await service.CreateQuestionAsync(question);
-                return RedirectToAction(nameof(Index));
+            if (string.IsNullOrWhiteSpace(question.Content))
+            {
+                return View();
+            }
+            try
+            {
+                var quiz = await service.GetLastQuiz();
+                await service.CreateQuestionAsync(question, quiz);
+                return RedirectToAction(nameof(Create), "Answers");
+            }
+            catch (ArgumentNullException)
+            {
+
+                return NotFound();
+            }
+                
+             
+              
             
            // ViewData["QuizId"] = new SelectList(_context.Quizzes, "Id", "Name", question.QuizId);
            // return View(question);
@@ -137,7 +154,7 @@ namespace Quizzz.Controllers
             {
                 await service.DeleteQuestionAsync(id);
             }
-            catch (ArgumentNullException ae)
+            catch (ArgumentNullException)
             {
                 return NotFound();
             }
