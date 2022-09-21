@@ -78,6 +78,30 @@ namespace Quizzz.Core.Services
             };
         }
 
+
+        public async Task<IEnumerable<QuestionViewModel>> GetQuestionsForQuizAsync(int id)
+        {
+            var questions = await repo.AllReadonly<Question>()
+                .Where(x => x.QuizId == id)
+                .Select(x => new QuestionViewModel()
+                {
+                    Id = x.Id, 
+                    Content = x.Content, 
+                    TimeCreated = x.TimeCreated, 
+                    QuizId = x.QuizId
+                })
+                .ToListAsync();
+
+            if (questions == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            return questions;
+           
+        }
+
+
         public async Task<IEnumerable<QuizViewModel>> GetQuizesAsync()
         {
             return await repo.AllReadonly<Quiz>()

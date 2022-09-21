@@ -10,6 +10,7 @@ namespace Quizzz.Core.Contracts
     public interface IQuizService
     {
         Task<IEnumerable<QuizViewModel>> GetQuizesAsync();
+        Task<IEnumerable<QuestionViewModel>> GetQuestionsForQuizAsync(int id);
 
         Task CreateQuizAsync(QuizViewModel model);
 

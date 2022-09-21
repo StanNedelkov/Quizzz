@@ -51,7 +51,7 @@ namespace Quizzz.Controllers
         {
             
            // ViewData["QuizId"] = new SelectList(service.GetAllQuizes(), "Id", "Name");
-           var quiz = await service.GetLastQuiz();
+           var quiz = await service.GetLastQuizAsync();
             ViewData["LastQuiz"] = quiz.Name;
             return View();
         }
@@ -69,7 +69,7 @@ namespace Quizzz.Controllers
             }
             try
             {
-                var quiz = await service.GetLastQuiz();
+                var quiz = await service.GetLastQuizAsync();
                 await service.CreateQuestionAsync(question, quiz);
                 return RedirectToAction(nameof(Create), "Answers");
             }
@@ -99,7 +99,7 @@ namespace Quizzz.Controllers
             {
                 return NotFound();
             }
-            ViewData["QuizId"] = new SelectList(service.GetAllQuizes(), "Id", "Name", question.QuizId);
+            ViewData["QuizId"] = new SelectList(await service.GetAllQuizes(), "Id", "Name", question.QuizId);
             return View(question);
         }
 
