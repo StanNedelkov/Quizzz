@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Quizzz.Core.Contracts;
 using Quizzz.Core.Models;
-using Quizzz.Infrastructure.Data;
-using Quizzz.Infrastructure.Data.Models;
 
 namespace Quizzz.Controllers
 {
