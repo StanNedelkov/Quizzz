@@ -6,7 +6,7 @@
 
 <h1>Edit</h1>
 
-<h4>Question</h4>
+<h4>Answer</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -19,7 +19,7 @@
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="QuestionId" class="control-label">Select Quiz</label>
+                <label asp-for="QuestionId" class="control-label">Select a questin for this answer.</label>
                 <select asp-for="QuestionId" class="form-control" asp-items="ViewBag.QuestionId"></select>
                 <span asp-validation-for="QuestionId" class="text-danger"></span>
             </div>

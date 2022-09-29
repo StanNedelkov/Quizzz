@@ -46,17 +46,29 @@ namespace Quizzz.Controllers
             return View(quiz);
         }
 
+        //GET: Questions for the particular quiz
         public async Task<IActionResult> QuestionsForQuiz(int? id)
         {
-            return View(await service.GetQuestionsForQuizAsync(id ?? 0));
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-          
+            try
+            {
+                return View(await service.GetQuestionsForQuizAsync(id ?? 0));
+            }
+            catch (ArgumentNullException)
+            {
+
+                return NotFound();
+            }
+            
         }
 
         // GET: Quizes/Create
         public IActionResult Create()
-        {
-            
+        {  
             return View();
         }
 
