@@ -1,26 +1,28 @@
-﻿@model Quizzz.Core.Models.QuestionViewModel
+﻿@model Quizzz.Infrastructure.Data.Models.Question
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "CreateNew";
 }
 
-<h2>Step 2 of 3</h2>
-<h4>Add a question for</h4>
-<h4>@Html.Label("",ViewData["LastQuiz"]?.ToString())</h4>
+<h1>Create</h1>
+
+<h4>Question</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="CreateNew">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Content" class="control-label"></label>
                 <input asp-for="Content" class="form-control" />
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
-            
             <div class="form-group">
-                <input type="submit" id = "btnCreate" name="Command" value="Add answers" class="btn btn-primary"/>
-                
+                <label asp-for="QuizId" class="control-label"></label>
+                <select asp-for="QuizId" class="form-control" asp-items="ViewBag.QuizId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -31,5 +33,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

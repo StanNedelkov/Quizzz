@@ -21,5 +21,6 @@ namespace Quizzz.Core.Contracts
         Task DeleteAnswerAsync(int id);
 
         Task EditAnswerAsync(AnswerViewModel model);
+        
     }
 }
