@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Quizzz.Core.Contracts;
 using Quizzz.Core.Models;
-using Quizzz.Infrastructure.Data;
-using Quizzz.Infrastructure.Data.Models;
 
 namespace Quizzz.Controllers
 {
@@ -51,7 +44,7 @@ namespace Quizzz.Controllers
         {
             
            // ViewData["QuizId"] = new SelectList(service.GetAllQuizes(), "Id", "Name");
-           var quiz = await service.GetLastQuiz();
+           var quiz = await service.GetLastQuizAsync();
             ViewData["LastQuiz"] = quiz.Name;
             return View();
         }
@@ -69,7 +62,7 @@ namespace Quizzz.Controllers
             }
             try
             {
-                var quiz = await service.GetLastQuiz();
+                var quiz = await service.GetLastQuizAsync();
                 await service.CreateQuestionAsync(question, quiz);
                 return RedirectToAction(nameof(Create), "Answers");
             }
@@ -99,7 +92,7 @@ namespace Quizzz.Controllers
             {
                 return NotFound();
             }
-            ViewData["QuizId"] = new SelectList(service.GetAllQuizes(), "Id", "Name", question.QuizId);
+            ViewData["QuizId"] = new SelectList(await service.GetAllQuizes(), "Id", "Name", question.QuizId);
             return View(question);
         }
 

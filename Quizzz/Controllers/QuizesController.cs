@@ -11,11 +11,13 @@ namespace Quizzz.Controllers
     {
        // private readonly ApplicationDbContext context;
         public IQuizService service;
+        public IQuestionService questionService;
 
-        public QuizesController(IQuizService _service)
+        public QuizesController(IQuizService _service, IQuestionService _questionService)
         {
            // this.context = _context;
             this.service = _service;
+            this.questionService = _questionService;
         }
 
         // GET: Quizes
@@ -23,9 +25,7 @@ namespace Quizzz.Controllers
         {
             return View(await service.GetQuizesAsync());
 
-              /*return context.Quizzes != null ? 
-                          View(await context.Quizzes.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Quizzes'  is null.");*/
+            
         }
 
         // GET: Quizes/Details/5
@@ -46,10 +46,29 @@ namespace Quizzz.Controllers
             return View(quiz);
         }
 
+        //GET: Questions for the particular quiz
+        public async Task<IActionResult> QuestionsForQuiz(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                return View(await service.GetQuestionsForQuizAsync(id ?? 0));
+            }
+            catch (ArgumentNullException)
+            {
+
+                return NotFound();
+            }
+            
+        }
+
         // GET: Quizes/Create
         public IActionResult Create()
-        {
-            
+        {  
             return View();
         }
 
@@ -63,14 +82,10 @@ namespace Quizzz.Controllers
             if (!string.IsNullOrWhiteSpace(quiz.Name))
             {
                 await service.CreateQuizAsync(quiz);
-
                 return RedirectToAction(nameof(Create), "Questions");
             }
             
-            /*if (ModelState.IsValid)
-            {
-                
-            }*/
+           
             return View(quiz);
         }
 
@@ -102,30 +117,17 @@ namespace Quizzz.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    await service.EditQuizAsync(quiz);
-                }
-                catch(ArgumentException)
-                {
-                    return NotFound();
-                }
-               /* catch (DbUpdateConcurrencyException)
-                {
-                    if (!QuizExists(quiz.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }*/
-                return RedirectToAction(nameof(Index));
+                await service.EditQuizAsync(quiz);
             }
-            return View(quiz);
+            catch (ArgumentException)
+            {
+                return NotFound();
+            }
+           
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Quizes/Delete/5

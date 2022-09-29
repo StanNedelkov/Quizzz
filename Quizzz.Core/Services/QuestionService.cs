@@ -86,14 +86,14 @@ namespace Quizzz.Core.Services
             }
         }
 
-        public IEnumerable<QuizViewModel> GetAllQuizes()
+        public async Task<IEnumerable<QuizViewModel>> GetAllQuizes()
         {
-            return repo.AllReadonly<Quiz>()
+            return await repo.AllReadonly<Quiz>()
                 .Select(x => new QuizViewModel() { Id = x.Id, Name = x.Name })
-                .ToArray();
+                .ToArrayAsync();
         }
 
-        public async Task<QuizViewModel> GetLastQuiz()
+        public async Task<QuizViewModel> GetLastQuizAsync()
         {
             var lastQuiz = await repo.AllReadonly<Quiz>()
                 .OrderBy(x => x.Id)

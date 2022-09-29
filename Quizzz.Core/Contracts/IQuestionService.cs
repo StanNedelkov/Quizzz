@@ -13,7 +13,7 @@ namespace Quizzz.Core.Contracts
 
         Task<IEnumerable<QuestionViewModel>> GetQuestionsAsync();
 
-        IEnumerable<QuizViewModel> GetAllQuizes();
+        Task<IEnumerable<QuizViewModel>> GetAllQuizes();
 
         Task<QuestionViewModel> GetDetailsAsync(int id);
 
@@ -21,6 +21,6 @@ namespace Quizzz.Core.Contracts
 
         Task DeleteQuestionAsync(int id);
 
-        Task<QuizViewModel> GetLastQuiz();
+        Task<QuizViewModel> GetLastQuizAsync();
     }
 }
