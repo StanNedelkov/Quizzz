@@ -50,7 +50,7 @@ namespace Quizzz.Controllers
         // POST: AnswersController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(MultiAnswersViewModel answerss)
+        public async Task<IActionResult> Create(MultiAnswersViewModel answerss, string Command)
         {
             try
             {
@@ -66,9 +66,12 @@ namespace Quizzz.Controllers
 
                 return NotFound();
             }
-            
-          
-            return RedirectToAction(nameof(Index));
+
+            if (Command == "Finnish quiz")
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction(nameof(Create), "Questions");
         }
 
         // GET: AnswersController/Edit/5

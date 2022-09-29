@@ -16,11 +16,14 @@ namespace Quizzz.Core.Contracts
         Task<IEnumerable<QuizViewModel>> GetAllQuizes();
 
         Task<QuestionViewModel> GetDetailsAsync(int id);
+        Task<QuizViewModel> GetQuizForAnswerAsync(int id);
 
         Task EditQuizAsync(QuestionViewModel model);
 
         Task DeleteQuestionAsync(int id);
 
         Task<QuizViewModel> GetLastQuizAsync();
+
+        Task<IEnumerable<AnswerViewModel>> GetAnswersForQuestionAsync(int id);
     }
 }

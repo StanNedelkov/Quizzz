@@ -67,7 +67,6 @@ namespace Quizzz.Core.Services
                 Quiz = quizForQuestion,
                 QuizId = question.QuizId
             };
-           
         }
 
         public async Task<IEnumerable<QuestionViewModel>> GetQuestionsAsync()
@@ -105,6 +104,43 @@ namespace Quizzz.Core.Services
                 throw new ArgumentNullException();
             }
                 return lastQuiz;
+        }
+
+        public async Task<IEnumerable<AnswerViewModel>> GetAnswersForQuestionAsync(int id)
+        {
+            var answers = await repo.AllReadonly<Answer>()
+                .Where(x => x.QuestionId == id && x.IsActive)
+                .Select(x => new AnswerViewModel()
+                {
+                    Id = x.Id,
+                    Content = x.Content,
+                    IsCorrect = x.IsCorrect,
+                    TimeCreated = x.TimeCreated
+                })
+                .ToArrayAsync();
+
+            if (answers == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            return answers;
+        }
+
+        public async Task<QuizViewModel> GetQuizForAnswerAsync(int id)
+        {
+            var quiz =  await repo.GetByIdAsync<Quiz>(id);
+            if (quiz == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            return new QuizViewModel() 
+            { 
+                Id = quiz.Id, 
+                Name = quiz.Name, 
+                Created = quiz.TimeCreated 
+            };
         }
     }
 }

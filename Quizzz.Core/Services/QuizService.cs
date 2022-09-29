@@ -82,7 +82,7 @@ namespace Quizzz.Core.Services
         public async Task<IEnumerable<QuestionViewModel>> GetQuestionsForQuizAsync(int id)
         {
             var questions = await repo.AllReadonly<Question>()
-                .Where(x => x.QuizId == id)
+                .Where(x => x.QuizId == id && x.IsActive)
                 .Select(x => new QuestionViewModel()
                 {
                     Id = x.Id, 
@@ -90,7 +90,7 @@ namespace Quizzz.Core.Services
                     TimeCreated = x.TimeCreated, 
                     QuizId = x.QuizId
                 })
-                .ToListAsync();
+                .ToArrayAsync();
 
             if (questions == null)
             {

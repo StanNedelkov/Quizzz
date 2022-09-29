@@ -64,19 +64,64 @@ namespace Quizzz.Controllers
             {
                 var quiz = await service.GetLastQuizAsync();
                 await service.CreateQuestionAsync(question, quiz);
-                return RedirectToAction(nameof(Create), "Answers");
+               
             }
             catch (ArgumentNullException)
             {
 
                 return NotFound();
             }
-                
-             
-              
-            
-           // ViewData["QuizId"] = new SelectList(_context.Quizzes, "Id", "Name", question.QuizId);
-           // return View(question);
+            return RedirectToAction(nameof(Create), "Answers");
+        }
+
+
+        public async Task<IActionResult> CreateNew()
+        {
+
+            ViewData["QuizId"] = new SelectList(await service.GetAllQuizes(), "Id", "Name");
+           
+            return View();
+        }
+
+        // POST: Questions/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateNew([Bind("Id,Content,QuizId")] QuestionViewModel question)
+        {
+            if (string.IsNullOrWhiteSpace(question.Content))
+            {
+                return View();
+            }
+            try
+            {
+                var quiz = await service.GetQuizForAnswerAsync(question.QuizId);
+                await service.CreateQuestionAsync(question, quiz);
+            }
+            catch (ArgumentNullException)
+            {
+                return NotFound();
+            }
+            return RedirectToAction(nameof(Create), "Answers");
+        }
+
+
+
+        public async Task<IActionResult>AnswersForQuestion(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            try
+            {
+                return View(await service.GetAnswersForQuestionAsync(id ?? 0));
+            }
+            catch (ArgumentNullException)
+            {
+                return NotFound();
+            }
         }
 
         // GET: Questions/Edit/5
