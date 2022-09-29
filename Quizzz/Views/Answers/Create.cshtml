@@ -1,0 +1,47 @@
+﻿@model Quizzz.Core.Models.MultiAnswersViewModel
+
+@{
+    ViewData["Title"] = "Create";
+   
+}
+
+<h2>Step 3 of 3</h2>
+<h4>Add answers for</h4>
+<h4>@Html.Label("", ViewData["LastQuestion"]?.ToString())</h4>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            
+          @for (int i = 0; i < 4; i++)
+            {
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                <label asp-for="Answers[i].Content" class="control-label"></label>
+                <input asp-for="Answers[i].Content" class="form-control" />
+                <span asp-validation-for="Answers[i].Content" class="text-danger"></span>
+                </div>
+
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="form-check-label">
+                    <input class="form-check-input" asp-for="@Model.Answers[i].IsCorrect" type="checkbox"/>
+                    Correct answer</label>
+                </div>
+            
+            }
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" id = "checkBtn"/>
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
