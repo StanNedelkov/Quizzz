@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Quizzz.Core.Contracts;
 using Quizzz.Core.Models;
-using Quizzz.Core.Services;
-using Quizzz.Infrastructure.Data;
-using Quizzz.Infrastructure.Data.Models;
 
 namespace Quizzz.Controllers
 {
@@ -24,8 +21,6 @@ namespace Quizzz.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await service.GetQuizesAsync());
-
-            
         }
 
         // GET: Quizes/Details/5
