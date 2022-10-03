@@ -52,10 +52,11 @@ namespace Quizzz.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MultiAnswersViewModel answerss, string Command)
         {
+           
             try
             {
                 var lastQuestion = await service.GetLastQuestion();
-                List<AnswerViewModel> answerList = answerss.Answers;
+                IList<AnswerViewModel> answerList = answerss.Answers;
                 foreach (var answer in answerList)
                 {
                     await service.CreateAnswerAsync(answer, lastQuestion);

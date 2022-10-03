@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Quizzz.Core.Models.QuizViewModel>
+
+@{
+    ViewData["Title"] = "Test";
+}
+
+<h1>Tests</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <a asp-action="Test" asp-route-id="@item.Id">Take test</a>
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
