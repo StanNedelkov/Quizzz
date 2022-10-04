@@ -88,7 +88,8 @@ namespace Quizzz.Core.Services
                     Id = x.Id, 
                     Content = x.Content, 
                     TimeCreated = x.TimeCreated, 
-                    QuizId = x.QuizId
+                    QuizId = x.QuizId,
+                    Answers = x.Answers
                 })
                 .ToArrayAsync();
 
@@ -101,6 +102,56 @@ namespace Quizzz.Core.Services
            
         }
 
+        public async Task<IEnumerable<TestQuestionsViewModel>> GetQuestionsForTestAsync(int id)
+        {
+            var questions = await repo.AllReadonly<Question>()
+                .Where(x => x.QuizId == id && x.IsActive)
+                .Select(x => new TestQuestionsViewModel()
+                {
+                    Id = x.Id,
+                    Content = x.Content,
+                    TimeCreated = x.TimeCreated,
+                    QuizId = x.QuizId
+                   
+                })
+                .ToArrayAsync();
+
+            foreach (var question in questions)
+            {
+                var answers = await repo.AllReadonly<Answer>()
+                    .Where(x => x.QuestionId == question.Id)
+                    .Select(x => new AnswerViewModel()
+                    {
+                        Id = x.Id,
+                        IsActive = x.IsActive,
+                        IsCorrect = x.IsCorrect,
+                        QuestionId = x.QuestionId,
+                        Question = x.Question,
+                        Content = x.Content,
+                        TimeCreated = x.TimeCreated
+                    }).ToArrayAsync();
+
+                if (answers.Count() != 4)
+                {
+                    continue;
+                }
+                
+                    question.Answer01 = answers[0];
+                    question.Answer02 = answers[1];
+                    question.Answer03 = answers[2];
+                    question.Answer04 = answers[3];
+
+                for (int i = 0; i < 4; i++)
+                {
+                    if (answers[i].IsCorrect)
+                    {
+                        question.CorrectAnswer = answers[i].Content;
+                    }
+                }
+            }
+
+            return questions;
+        }
 
         public async Task<IEnumerable<QuizViewModel>> GetQuizesAsync()
         {

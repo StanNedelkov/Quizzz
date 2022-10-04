@@ -19,6 +19,11 @@ namespace Quizzz.Controllers
             return View(await quizService.GetQuizesAsync());
         }
 
+
+        public async Task<ActionResult> Complete(int? id)
+        {
+            return View(await quizService.GetQuestionsForTestAsync(id ?? 0));
+        }
         // GET: TestController/Details/5
         public ActionResult Details(int id)
         {

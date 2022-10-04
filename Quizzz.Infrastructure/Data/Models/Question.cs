@@ -23,6 +23,6 @@ namespace Quizzz.Infrastructure.Data.Models
 
         public bool IsActive { get; set; } = true;
 
-        public string TimeCreated { get; set; }
+        public string TimeCreated { get; set; } = null!;
     }
 }
