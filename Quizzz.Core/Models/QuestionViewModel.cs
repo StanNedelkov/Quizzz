@@ -20,5 +20,8 @@ namespace Quizzz.Core.Models
         public Quiz Quiz { get; set; } = null!;
         public string QuizName { get; set; } = null!;
         public string TimeCreated { get; set; } = null!;
+
+        public int AnswerId { get; set; }
+        public ICollection<Answer> Answers { get; set; } = null!;
     }
 }

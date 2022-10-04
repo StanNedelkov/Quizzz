@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Quizzz.Core.Models.TestQuestionsViewModel>
+
+@{
+    ViewData["Title"] = "Complete";
+    int counter = 1;
+    
+}
+
+<h4>
+    Test 
+</h4>
+
+<table class="table">
+    <thead>
+      
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th>
+                    Question @counter.ToString(): @Html.DisplayFor(modelItem => item.Content)
+                </th>
+            </tr>
+            counter++;
+            
+            <tr>
+               <td>
+             <input id="radio1" input type="radio" name="@item.Content" class="rb" value="@item.Answer01" />@Html.DisplayFor(modelItem => @item.Answer01.Content)   
+
+            <input id="radio2" input type="radio" name="@item.Content" class="rb" value="@item.Answer02" />@Html.DisplayFor(modelItem => @item.Answer02.Content)    
+
+            <input id="radio3" input type="radio" name="@item.Content" class="rb" value="@item.Answer03" />@Html.DisplayFor(modelItem => @item.Answer03.Content)    
+
+            <input id="radio4" input type="radio" name="@item.Content" class="rb" value="@item.Answer04" />@Html.DisplayFor(modelItem => @item.Answer04.Content)    
+              <label name="@item.Content" class="rb" style="display:none; color:forestgreen; font:bold" >@item.CorrectAnswer</label> 
+               </td>
+                </tr>
+        }
+    </tbody>
+</table>
+<div class="form-group">
+    <input type="button" id="btn1" value="submit" class="btn-success" onclick="displayresults();"/>
+    <label id="lbluseranswers"></label>
+
+</div>
+
+<div class="form-check">
+</div>
+
+<div class="form-group">
+    <input type="button" id="btn2" value="Back to list" class="btn btn-secondary" />
+</div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+           <script>
+
+               $(Document).ready(function()
+               {
+                   $("#btn1").click(function()
+                   {
+                       $(".rb").show();
+                       $(".rb").attr("disabled",true);
+                   })
+               });
+
+               //function displayresults()
+               //{
+                 //   document.getElementById("lbluseranswers").innerHTML = "";
+                //    var result = document.getElementsByTagName('input');
+               //     for(i = 0; i < result.length; i++)
+               //     {
+              //          if(result[i].type == "radio"){
+               //             if(result[i].checked){
+              //      document.getElementById("lbluseranswers").innerHTML += "Question "+ i + "You've selected: " + result[i].value + "<br/>"
+               //             }
+             //           }
+             //       }
+             //  }
+           </script> 
