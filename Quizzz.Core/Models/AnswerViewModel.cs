@@ -18,6 +18,7 @@ namespace Quizzz.Core.Models
         public int QuestionId { get; set; }
         public virtual Question Question { get; set; } = null!;
         public bool IsActive { get; set; } = true;
+        public bool IsSelected { get; set; } = false;
         public string TimeCreated { get; set; } = null!;
     }
 }

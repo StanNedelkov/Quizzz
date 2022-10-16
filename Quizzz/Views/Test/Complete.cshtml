@@ -1,80 +1,77 @@
-﻿@model IEnumerable<Quizzz.Core.Models.TestQuestionsViewModel>
-
+﻿@model Quizzz.Core.Models.TestsViewModel
 @{
     ViewData["Title"] = "Complete";
-    int counter = 1;
+    int counter = Model.MultiQuestions.Count();
+}   
+
+<div>
+    <form asp-action="Complete">
+        
+    @for (int i = 0; i < counter; i++)
+    { 
+            int qCount = i + 1;
+            int id = Model.MultiQuestions[i].Id;
+            string content = Model.MultiQuestions[i].QuizName;
+            Model.MultiQuestions[i].Id = id;
+            Model.MultiQuestions[i].QuizName = content;
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Id)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Answer01.Id)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Answer01.Content)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Answer01.IsCorrect)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Answer02.Id)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Answer02.Content)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Answer02.IsCorrect)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Content)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Answer03.Id)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Answer03.Content)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Answer03.IsCorrect)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Answer04.Id)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Answer04.Content)
+            @Html.HiddenFor(x => Model.MultiQuestions[i].Answer04.IsCorrect)
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label>Question @qCount</label>
+                <input disabled asp-for="@Model.MultiQuestions[i].Content" class="form-control" rows="1" style="resize: none">
+                <span asp-validation-for="@Model.MultiQuestions[i].Content" class="text-danger"></span>
+        </div>
+        <div class="btn-group" data-toggle="buttons">
+            <label class="form-check-label">
+                    <input class="form-check-input" asp-for="@Model.MultiQuestions[i].Answer01.IsSelected" type="checkbox"/>
+                    <a>@Model.MultiQuestions[i].Answer01.Content</a>
+                    <input class="form-check-input" asp-for="@Model.MultiQuestions[i].Answer02.IsSelected" type="checkbox"/>
+                    <a>@Model.MultiQuestions[i].Answer02.Content</a>
+                    <input class="form-check-input" asp-for="@Model.MultiQuestions[i].Answer03.IsSelected" type="checkbox"/>
+                    <a>@Model.MultiQuestions[i].Answer03.Content</a>
+                    <input class="form-check-input" asp-for="@Model.MultiQuestions[i].Answer04.IsSelected" type="checkbox"/>
+                    <a>@Model.MultiQuestions[i].Answer04.Content</a>
+                    <label id="lb1" name="@Model.MultiQuestions[i].Content" class="rb" style="display:none; color:forestgreen; font:bold"> Correct: @Model.MultiQuestions[i].CorrectAnswer</label>
+            </label>
+        </div>
+    }
+    <div class="form-group">
+        <input type="submit" id="btnCreate" name="Command" value="Finnish quiz" class="btn btn-primary" />
+            <input type="button" name="Command" id="btn1" value="cheat" class="btn-success small" onclick="displayresults();" />
+            <label id="lbluseranswers"></label>
+        
+    </div>
+    </form>
+    <div>
+        <a asp-action="Complete">Reload test</a>
+    </div>
     
-}
-
-<h4>
-    Test 
-</h4>
-
-<table class="table">
-    <thead>
-      
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <th>
-                    Question @counter.ToString(): @Html.DisplayFor(modelItem => item.Content)
-                </th>
-            </tr>
-            counter++;
-            
-            <tr>
-               <td>
-             <input id="radio1" input type="radio" name="@item.Content" class="rb" value="@item.Answer01" />@Html.DisplayFor(modelItem => @item.Answer01.Content)   
-
-            <input id="radio2" input type="radio" name="@item.Content" class="rb" value="@item.Answer02" />@Html.DisplayFor(modelItem => @item.Answer02.Content)    
-
-            <input id="radio3" input type="radio" name="@item.Content" class="rb" value="@item.Answer03" />@Html.DisplayFor(modelItem => @item.Answer03.Content)    
-
-            <input id="radio4" input type="radio" name="@item.Content" class="rb" value="@item.Answer04" />@Html.DisplayFor(modelItem => @item.Answer04.Content)    
-              <label name="@item.Content" class="rb" style="display:none; color:forestgreen; font:bold" >@item.CorrectAnswer</label> 
-               </td>
-                </tr>
-        }
-    </tbody>
-</table>
-<div class="form-group">
-    <input type="button" id="btn1" value="submit" class="btn-success" onclick="displayresults();"/>
-    <label id="lbluseranswers"></label>
-
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
 
-<div class="form-check">
-</div>
-
-<div class="form-group">
-    <input type="button" id="btn2" value="Back to list" class="btn btn-secondary" />
-</div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-           <script>
-
-               $(Document).ready(function()
-               {
-                   $("#btn1").click(function()
-                   {
-                       $(".rb").show();
-                       $(".rb").attr("disabled",true);
-                   })
-               });
-
-               //function displayresults()
-               //{
-                 //   document.getElementById("lbluseranswers").innerHTML = "";
-                //    var result = document.getElementsByTagName('input');
-               //     for(i = 0; i < result.length; i++)
-               //     {
-              //          if(result[i].type == "radio"){
-               //             if(result[i].checked){
-              //      document.getElementById("lbluseranswers").innerHTML += "Question "+ i + "You've selected: " + result[i].value + "<br/>"
-               //             }
-             //           }
-             //       }
-             //  }
-           </script> 
+    $(Document).ready(function () {
+        $("#btn1").click(function () {
+            $(".rb").show();
+            $("#lb1").attr("disabled", true);
+        })
+    });
+</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

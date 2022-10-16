@@ -12,7 +12,7 @@ namespace Quizzz.Core.Contracts
         Task<IEnumerable<QuizViewModel>> GetQuizesAsync();
         Task<IEnumerable<QuestionViewModel>> GetQuestionsForQuizAsync(int id);
 
-        Task<IEnumerable<TestQuestionsViewModel>> GetQuestionsForTestAsync(int id);
+        Task<TestsViewModel> GetQuestionsForTestAsync(int id);
 
         Task CreateQuizAsync(QuizViewModel model);
 

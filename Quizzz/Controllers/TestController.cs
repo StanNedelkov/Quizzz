@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Quizzz.Core.Contracts;
+using Quizzz.Core.Models;
 
 namespace Quizzz.Controllers
 {
@@ -14,83 +15,46 @@ namespace Quizzz.Controllers
             this.quizService = quizService;
         }
         // GET: TestController
-        public async Task<ActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             return View(await quizService.GetQuizesAsync());
         }
 
-
-        public async Task<ActionResult> Complete(int? id)
+        [HttpGet]
+        public async Task<IActionResult> Complete(int? id)
         {
-            return View(await quizService.GetQuestionsForTestAsync(id ?? 0));
-        }
-        // GET: TestController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
+           var questions = await quizService.GetQuestionsForTestAsync(id ?? 0);
+            ViewData["questions"] = questions.MultiQuestions;
+            return View(questions);
         }
 
-        // GET: TestController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
 
-        // POST: TestController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Complete(TestsViewModel questions, string Command)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+
+            int correctAnswers = questions.MultiQuestions.Where(x => 
+            (x.Answer01.IsSelected && x.Answer01.IsCorrect) || (x.Answer02.IsSelected && x.Answer02.IsCorrect) ||
+            (x.Answer03.IsSelected && x.Answer03.IsCorrect) || (x.Answer04.IsSelected && x.Answer04.IsCorrect))
+                .Count();
+            int allAnswers = questions.MultiQuestions.Count();
+            TempData["correctA"] = correctAnswers;
+            TempData["allA"] = allAnswers;
+           
+            return RedirectToAction(nameof(TestResult));
         }
 
-        // GET: TestController/Edit/5
-        public ActionResult Edit(int id)
+        public IActionResult TestResult()
         {
-            return View();
+            var res = new TestResultViewModel()
+            {
+                CorrectAnswers = Convert.ToInt32(TempData["correctA"]),
+                TotalAnswers = Convert.ToInt32(TempData["allA"]),
+            };
+            return View(res);
         }
 
-        // POST: TestController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: TestController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: TestController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }
+
