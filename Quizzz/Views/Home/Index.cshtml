@@ -4,5 +4,36 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <section id="hero" class="d-flex align-items-center">
+
+        <div class="container">
+            <div class="col">
+                <div class="flex-lg-column justify-content-center align-items-stretch" data-aos="fade-up">
+                    <div class="container text-center">
+                        <h1>This is a quiz app</h1>
+                        <h2>Here you can test your knowledge and make your own quizes</h2>
+                    
+                    @using (Html.BeginForm("Create", "Quizes", FormMethod.Post))
+                    {
+                     <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Create your quiz</button>
+                    }
+                   
+                      
+                    @using (Html.BeginForm("Index", "Test", FormMethod.Post))
+                    {
+                       <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Try a quiz</button>
+                           
+                    }
+               
+                
+                    </div>
+                </div>
+                <div class="col-lg-6 d-lg-flex flex-lg-column align-items-stretch order-1 order-lg-2 hero-img" data-aos="fade-up">
+                    <img src="assets/img/hero-img.png" class="img-fluid" alt="">
+                </div>
+            </div>
+        </div>
+
+    </section><!-- End Hero -->
+    
 </div>
