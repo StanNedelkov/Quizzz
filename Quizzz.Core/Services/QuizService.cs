@@ -2,13 +2,7 @@
 using Quizzz.Core.Contracts;
 using Quizzz.Core.Models;
 using Quizzz.Infrastructure.Data.Common.Contracts;
-using Quizzz.Infrastructure.Data.Common.Repository;
 using Quizzz.Infrastructure.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Quizzz.Core.Services
 {
@@ -28,24 +22,33 @@ namespace Quizzz.Core.Services
             (
                 new Quiz() { Name = model.Name, TimeCreated = DateTime.Now.ToString("F") }
             );
-            await repo.SaveChangesAsync();
-            
+            await repo.SaveChangesAsync();  
         }
 
         public async Task DeleteQuizAsync(int id)
         {
-
             var quizToDelete = await repo.GetByIdAsync<Quiz>(id);
+            
             if (quizToDelete == null)
             {
                 throw new ArgumentException(invalidIdMessage);
             }
             if (quizToDelete.IsActive)
             {
+                quizToDelete.Questions
+                    .Where(x => x.IsActive)
+                    .ToList()
+                    .ForEach(x => x.IsActive = false);
+
+                quizToDelete.Questions
+                    .ToList()
+                    .ForEach(x => x.Answers.Where(x => x.IsActive)
+                    .ToList()
+                    .ForEach(x => x.IsActive = false));
+
                 quizToDelete.IsActive = false;
                 await repo.SaveChangesAsync();
             }
-          
         }
 
         public async Task EditQuizAsync(QuizViewModel model)
@@ -74,7 +77,6 @@ namespace Quizzz.Core.Services
                 Id = quizWithDetails.Id,
                 Name = quizWithDetails.Name,
                 Created = quizWithDetails.TimeCreated
-                
             };
         }
 
@@ -99,12 +101,10 @@ namespace Quizzz.Core.Services
             }
 
             return questions;
-           
         }
 
         public async Task<TestsViewModel> GetQuestionsForTestAsync(int id)
         {
-
           var questions = await repo.AllReadonly<Question>()
                 .Where(x => x.QuizId == id && x.IsActive)
                 .Select(x => new TestQuestionsViewModel()
@@ -120,8 +120,7 @@ namespace Quizzz.Core.Services
                 .ToArrayAsync();
 
             foreach (var question in questions)
-            {
-                
+            { 
                 var answers = await repo.AllReadonly<Answer>()
                     .Where(x => x.QuestionId == question.Id && x.IsActive)
                     .Select(x => new AnswerViewModel()

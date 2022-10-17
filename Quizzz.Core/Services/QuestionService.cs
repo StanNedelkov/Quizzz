@@ -3,11 +3,6 @@ using Quizzz.Core.Contracts;
 using Quizzz.Core.Models;
 using Quizzz.Infrastructure.Data.Common.Contracts;
 using Quizzz.Infrastructure.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Quizzz.Core.Services
 {
@@ -36,8 +31,13 @@ namespace Quizzz.Core.Services
 
             CheckIfQuestionIsNull(question);
 
+            question.Answers
+                .Where(a => a.IsActive == true)
+                .ToList()
+                .ForEach(a => a.IsActive = false);
             question.IsActive = false;
             await repo.SaveChangesAsync();
+
         }
 
         public async Task EditQuizAsync(QuestionViewModel model)

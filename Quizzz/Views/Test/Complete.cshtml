@@ -10,10 +10,7 @@
     @for (int i = 0; i < counter; i++)
     { 
             int qCount = i + 1;
-            int id = Model.MultiQuestions[i].Id;
-            string content = Model.MultiQuestions[i].QuizName;
-            Model.MultiQuestions[i].Id = id;
-            Model.MultiQuestions[i].QuizName = content;
+           
             @Html.HiddenFor(x => Model.MultiQuestions[i].Id)
             @Html.HiddenFor(x => Model.MultiQuestions[i].Answer01.Id)
             @Html.HiddenFor(x => Model.MultiQuestions[i].Answer01.Content)
@@ -52,7 +49,6 @@
         <input type="submit" id="btnCreate" name="Command" value="Finnish quiz" class="btn btn-primary" />
             <input type="button" name="Command" id="btn1" value="cheat" class="btn-success small" onclick="displayresults();" />
             <label id="lbluseranswers"></label>
-        
     </div>
     </form>
     <div>

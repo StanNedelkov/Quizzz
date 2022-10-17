@@ -9,6 +9,20 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<div class="btn-group">
+    @using (Html.BeginForm("Index", "Quizes", FormMethod.Post))
+    {
+        <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Edit Quizes</button>
+    }
+    @using (Html.BeginForm("Index", "Questions", FormMethod.Post))
+    {
+            <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Edit Questions</button>
+    }
+    @using (Html.BeginForm("Index", "Answers", FormMethod.Post))
+    {
+        <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Edit Answers</button>
+    }
+</div>
 <table class="table">
     <thead>
         <tr>
